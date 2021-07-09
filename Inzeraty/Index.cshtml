@@ -1,0 +1,282 @@
+﻿@model Gon.Models.InzeratyViewModel
+@{
+    ViewBag.Title = "Inzeráty";
+    var selectedPages = new List<int>();
+    if (Model.CurrentPage == 1)
+    {
+        selectedPages.Add(1);
+        if (Model.Pages >= 2)
+        {
+            selectedPages.Add(2);
+        }
+        if (Model.Pages >= 3)
+        {
+            selectedPages.Add(3);
+        }
+    }
+    else if (Model.CurrentPage == Model.Pages)
+    {
+        if (Model.Pages >= 3)
+        {
+            selectedPages.Add(Model.CurrentPage - 2);
+        }
+        selectedPages.Add(Model.CurrentPage - 1);
+        selectedPages.Add(Model.CurrentPage);
+    }
+    else
+    {
+        selectedPages.Add(Model.CurrentPage - 1);
+        selectedPages.Add(Model.CurrentPage);
+        if (Model.Pages >= 3)
+        {
+            selectedPages.Add(Model.CurrentPage + 1);
+        }
+    }
+}
+<style>
+    .category-side-menu {
+        width: 23rem;
+        margin-right: 7.2rem;
+    }
+
+    .category-link {
+        padding: 0;
+        margin-bottom: 3rem;
+    }
+
+        .category-link * {
+            margin: 0 auto;
+        }
+
+        .category-link h2 {
+            margin-top: 17%;
+        }
+
+    .quarter-links {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        margin: 0 15px;
+    }
+
+        .quarter-links > a {
+            display: block;
+            flex: 50%;
+            padding: 15px 0;
+            text-align: center;
+        }
+            .quarter-links > a > img {
+                width: 32px;
+                height: 32px;
+            }
+
+    .subcategory-links {
+        margin-top: 5.4rem;
+    }
+        .subcategory-links a {
+            display: block;
+            padding: 2rem 3.4rem;
+            margin-top: 8px;
+            font-size: 2rem;
+            border-radius: 100px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: clip;
+            transition: 0.2s all;
+        }
+            .subcategory-links a img {
+                max-width: 3.2rem;
+                margin-right: 1rem;
+            }
+
+            .subcategory-links a.selected,
+            .subcategory-links a:hover,
+            .subcategory-links a:focus {
+                box-shadow: 0px 10px 15px rgba(23, 23, 36, 0.28);
+                color: #EC7869;
+                background: white;
+            }
+</style>
+<section class="padded-desktop">
+    <div class="container">
+        @using (Html.BeginForm("Search", "Inzeraty", null, FormMethod.Post, new { id = "search-form", @class = "form-horizontal sticky-search-top", role = "form" }))
+        {
+            <div class="flex flex-vertical-mobile">
+                <div class="category-side-menu">
+                    @if (Model.Category != null)
+                    {
+                        <a class="category-link category-header-block" href="@Url.Action("Index", "Inzeraty", new { categoryId = Model.Category.Id })">
+                            @if (!string.IsNullOrWhiteSpace(Model.Category.HighlightIconImageUrl))
+                            {
+                                <img class="hover-hidden" src="@Model.Category.IconImageUrl" alt="@Model.Category.Name IKONA" />
+                                <img class="hover-visible" src="@Model.Category.HighlightIconImageUrl" alt="@Model.Category.Name IKONA HIGHLIGHT" />
+                            }
+                            else
+                            {
+                                <img src="@Model.Category.IconImageUrl" alt="@Model.Category.Name IKONA" />
+                            }
+                            <h2>@Model.Category.Name</h2>
+                        </a>
+
+                    }
+                    <div class="quarter-links">
+                        @foreach (var category in Model.Categories.OrderBy(x => x.DisplayOrder))
+                        {
+                            var isSelected = Model.Category != null && category.Id == Model.Category.Id;
+
+                            <a @if (isSelected) { <text> selected="selected" </text> } href="/Inzeraty?categoryId=@category.Id">
+                                @if (isSelected)
+                                {
+                                    <img src="@category.HighlightIconImageUrl" alt="@category.Name" />
+                                }
+                                else
+                                {
+                                    <img src="@category.IconImageUrl" alt="@category.Name" />
+                                }
+                            </a>
+                        }
+                    </div>
+                    @if (Model.Category?.Subcategories != null)
+                    {
+                        <div class="subcategory-links">
+                            @foreach (var subcategory in Model.Category?.Subcategories.OrderBy(x => x.DisplayOrder))
+                            {
+                                var subSelectedClass = "";
+                                if (Model.Subcategory != null && subcategory.Id == Model.Subcategory.Id)
+                                {
+                                    subSelectedClass = "selected";
+                                }
+                                <a href="@Url.Action("Index", "Inzeraty", new { subcategoryId = subcategory.Id })" class="@subSelectedClass"><img src="@subcategory.IconImageUrl" alt="@subcategory.Name" />@subcategory.Name</a>
+                            }
+                        </div>
+                    }
+                </div>
+                <div class="flex-grow">
+                    @Html.Partial("_SearchForm", Model.SearchViewModel)
+                    @if (Model.Inzeraty.Any())
+                    {
+                        <div class="flex-mobile flex-wrap mobile-half-inzerats">
+                            @foreach (var inzerat in Model.Inzeraty)
+                            {
+                                <div class="flex-mobile-half">
+                                    @Html.Partial("_FullInzeratThumbnail", inzerat)
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="not-found">
+                            Nenašli sme žiadny inzerát :(
+                        </div>
+                    }
+                </div>
+            </div>
+            <div>
+                <div class="desktop-hidden">
+                    <div class="center-button-wrapper">
+                        <!-- Statická reklama -->
+                        <ins class="adsbygoogle"
+                             style="display:block"
+                             data-ad-client="ca-pub-9377790452991419"
+                             data-ad-slot="1976037904"
+                             data-ad-format="auto"
+                             data-full-width-responsive="true"></ins>
+                        <script>
+                            (adsbygoogle = window.adsbygoogle || []).push({});
+                        </script>
+                    </div>
+                </div>
+                <div class="mobile-hidden">
+                    <div class="center-button-wrapper">
+                        <ins class="adsbygoogle"
+                             style="display:block"
+                             data-ad-format="fluid"
+                             data-ad-layout-key="-d5-h+au-1ek+172"
+                             data-ad-client="ca-pub-9377790452991419"
+                             data-ad-slot="5653018878"></ins>
+                        <script>
+                            window.onload = function () {
+                                (adsbygoogle = window.adsbygoogle || []).push({});
+                            }
+                        </script>
+                    </div>
+                </div>
+
+                @if (Model.Inzeraty.Any())
+                {
+                    <div class="pagination-wrapper">
+                        <ul class="pagination">
+                            @if (Model.CurrentPage > 1)
+                            {
+                                <li class="page-item enabled">
+                                    <a class="page-link" data-page="@(Model.CurrentPage-1)">
+                                        <img src="~/Content/img/sipkavlavo.png" />
+                                    </a>
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="page-item disabled">
+                                    <a class="page-link">
+                                        <img src="~/Content/img/sipkavlavo.png" />
+                                    </a>
+                                </li>
+                            }
+                            @foreach (var i in selectedPages)
+                            {
+                                var isActive = Model.CurrentPage == i;
+                                <li class="page-item enabled @if (isActive) {<text>active</text>} ">
+                                    <a class="page-link" data-page="@i">@i</a>
+                                </li>
+                            }
+                            @if (Model.CurrentPage < Model.Pages)
+                            {
+                                <li class="page-item enabled">
+                                    <a class="page-link" data-page="@(Model.CurrentPage+1)">
+                                        <img src="~/Content/img/sipkavpravo.png" />
+                                    </a>
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="page-item disabled">
+                                    <a class="page-link">
+                                        <img src="~/Content/img/sipkavpravo.png" />
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+
+                }
+            </div>
+        }
+    </div>
+</section>
+@section Scripts {
+    <script>
+        $('#category-select').change(function () {
+            var categoryId = $(this).val();
+            $('#CategoryId').val(categoryId);
+            $('#SubcategoryId').val('');
+
+            $('#search-form').submit();
+        });
+        $('#subcategory-select').change(function () {
+            var subcategoryId = $(this).val();
+            $('#SubcategoryId').val(subcategoryId);
+
+            $('#search-form').submit();
+        });
+        $('.filter-toggle').click(function () {
+            $('.filter-menu').slideToggle();
+            $('.filter-wrapper').toggleClass('open');
+        })
+        $(document).bind('click', function (e) {
+            if (!$(e.target).closest('.zip-code-suggestions').length) {
+                $('.zip-code-suggestions').hide();
+            }
+        });
+    </script>
+}

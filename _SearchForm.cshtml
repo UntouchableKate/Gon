@@ -1,0 +1,137 @@
+﻿@model Gon.Models.SearchViewModel
+@{ 
+    var hasItemClass = "";
+    var style = "";
+    if (!Model.HasItems)
+    {
+        hasItemClass = "open";
+        style = "display: block;";
+    }
+}
+@*@using (Html.BeginForm("Search", "Inzeraty", null, FormMethod.Post, new { id="search-form", @class = "form-horizontal sticky-search-top", role = "form" }))
+{*@
+    @Html.AntiForgeryToken()
+
+    @Html.HiddenFor(x => x.Page)
+    @Html.HiddenFor(x => x.CategoryId)
+    @Html.HiddenFor(x => x.SubcategoryId)
+
+    <div class="flex filter-wrapper filters flex-wrap @hasItemClass">
+        <div class="flex-item flex flex-grow-max">
+            <div class="flex-item flex-grow-max">
+                @Html.TextBoxFor(m => m.Query, new { @class = "search-input" })
+                <button class="search-button small-search-button" type="submit"><img src="~/Content/img/vyhladavanie_lupa.png" alt="Lupa" /></button>
+            </div>
+        </div>
+        <div class="flex flex-item flex-grow">
+            <div class="flex flex-item">
+                <div class="flex flex-item flex-grow align-center">
+                    <label for="ZipCode">PSČ</label>
+                    @Html.TextBoxFor(m => m.ZipCode, new { @class = "zip-input", autocomplete = "off" })
+                </div>
+            </div>
+            <div class="flex flex-item price-row">
+                <label for="PriceFrom">Cena od</label>
+                @Html.TextBoxFor(m => m.PriceFrom, new { @class = "price-input" })
+                <label for="PriceTo">do</label>
+                @Html.TextBoxFor(m => m.PriceTo, new { @class = "price-input" })
+            </div>
+            <div class="zip-code-suggestions">
+            </div>
+        </div>
+    </div>
+@*}*@
+<style>
+    .filter-wrapper label {
+        margin-bottom: 0 !important;
+    }
+    .filter-toggle {
+        padding: 2px 10px;
+        color: white;
+        background: black;
+        border: 2px solid black;
+        border-radius: 0 50px 50px 0;
+        font-weight: 700;
+        cursor: pointer;
+    }
+        .filter-toggle:hover,
+        .filter-toggle:focus {
+            color: white;
+            text-decoration: none;
+        }
+
+    .km-row {
+        max-width: 140px;
+    }
+    .price-row {
+        align-items: center;
+        margin-left: 22px;
+    }
+
+    .filter-button-wrapper {
+        margin-bottom: 0 !important;
+    }
+        .filter-button-wrapper button {
+            width: 100%;
+        }
+
+    .price-input {
+        max-width: 15rem;
+    }
+
+    label[for="ZipCode"] {
+        margin-left: 6rem !important;
+    }
+
+    .zip-input {
+        max-width: 19.2rem;
+        margin-right: 2.5rem;
+    }
+    .radius-input {
+        border-radius: 0 50px 50px 0;
+        border-left: none;
+        max-width: 70px;
+    }
+
+    .search-input {
+        padding: 1rem 5rem 1rem 2rem;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .filter-wrapper {
+        padding-top: 0;
+        margin: 0 -20px 6rem 0;
+    }
+
+        .filters > .flex-item {
+            margin: 0 20px 1.5rem 0;
+            position: relative;
+        }
+
+    .filters label {
+        margin-right: 2.8rem;
+        margin-left: 2.8rem;
+        font-size: 2.2rem;
+    }
+
+        @@media (max-width: 767px) {
+            .filter-menu {
+                margin-right: 0 !important;
+                display: none;
+                max-width: 100%;
+            }
+            .radius-input {
+                width: 100%;
+                max-width: 100%;
+            }
+        }
+        @@media (min-width: 768px) {
+            .filter-menu > .flex-item {
+                margin-bottom: 0 !important;
+            }
+            .price-row {
+                margin-right: 0 !important;
+            }
+        }
+</style>

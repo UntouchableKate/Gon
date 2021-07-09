@@ -1,0 +1,686 @@
+﻿@model Gon.Models.HomeViewModel
+@{
+    ViewBag.Title = "Resell, News";
+    //var banner = Model.Banners.First();
+}
+
+    <div class="home-header-wrapper">
+        <div class="home-header-background">
+            @for (int i = 0; i < Model.Banners.Count; i++)
+            {
+                var banner = Model.Banners[i];
+                <div class="image-background flex @if (i == 0) {<text>shown</text>}" style="background-image: url('@banner.BannerBackgroundImageUrl')" data-id="@Model.Banners[i].Id">
+                    <div class="slider">
+                        @if (string.IsNullOrWhiteSpace(banner.BannerLogoImageUrl))
+                        {
+                            <div style="display: block; margin: 0 auto; width: 28.8rem; margin-top: 9rem; padding-top: 8.15%;"></div>
+                        }
+                        else
+                        {
+                            <img src="@banner.BannerLogoImageUrl" alt="@banner.BannerText" />
+                        }
+                        <a style="color: @banner.BannerButtonColor" href="@banner.BannerButtonLink">@*@banner.BannerButtonName*@ NAVŠTÍV SHOP</a>
+                    </div>
+                </div>
+            }
+            <div class="gallery-dots header-dots">
+                @for (int i = 0; i < Model.Banners.Count; i++)
+                {
+                    <div class="dot @if (i == 0) {<text>selected</text>}" data-id="@Model.Banners[i].Id"></div>
+                }
+            </div>
+        </div>
+    </div>
+
+<div class="homePage-wrapper">
+
+    <section class="category-wrapper flex">
+        @foreach (var category in Model.Categories)
+        {
+            <a href="@Url.Action("Index", "Inzeraty", new { categoryId = category.Id })">
+                <div class="category-links-img-wrapper">
+                    <img class="hover-hidden" src="@category.IconImageUrl" alt="@category.Name IKONA" />
+                    <img class="hover-visible" src="@category.HighlightIconImageUrl" alt="@category.Name IKONA HIGHLIGHT" />
+                </div>
+                <h2 class="mobile-hidden--homePage">@category.Name</h2>
+            </a>
+        }
+    </section>
+
+</div>
+
+<section class="category-style-wrapper ">
+    <h2 class="category-style-title">Nakupujte podľa štýlu</h2>
+    <div class="swiper-container by-styled-wrapper-slider desktop-hidden--homePage">
+        <div class="swiper-wrapper">
+            <div class="swiper-slide">
+                <a>
+                    <img src="~/Content/img/streetwear-img.png" />
+                    <p>Streetwear</p>
+                </a>
+            </div>
+            <div class="swiper-slide">
+                <a>
+                    <img src="~/Content/img/vintage-img.png" />
+                    <p>Vintage</p>
+                </a>
+            </div>
+            <div class="swiper-slide">
+                <a>
+                    <img src="~/Content/img/luxury-img.png" />
+                    <p>Luxury</p>
+                </a>
+            </div>
+            <div class="swiper-slide">
+                <a>
+                    <img src="~/Content/img/casual-img.png" />
+                    <p>Casual</p>
+                </a>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="flex by-styled-wrapper mobile-hidden--homePage">
+        <a class="category-style-item category-style-item-streetwear">
+            <p class="category-style-item-text">Streetwear</p>
+        </a>
+        <a class="category-style-item category-style-item-vintage">
+            <p class="category-style-item-text">Vintage</p>
+        </a>
+        <a class="category-style-item category-style-item-luxury">
+            <p class="category-style-item-text">Luxury</p>
+        </a>
+        <a class="category-style-item category-style-item-casual">
+            <p class="category-style-item-text">Casual</p>
+        </a>
+    </div>
+</section>
+
+<div class="homePage-wrapper">
+    <section class="recently-viewed-wrapper">
+        <a><h3 class="recently-viewed-title">Naposledy videné</h3></a>
+        <div class="recently-viewed mobile-hidden--homePage">
+            <div class="flex  flex-grow">
+                @{ var index = 0; }
+                @foreach (var inzerat in Model.MostViewedInzerats.OrderByDescending(x => x.ViewCount))
+                {
+                    inzerat.IsMostViewed = true;
+                    index++;
+                    var additionalClass = "";
+                    if (index > 5)
+                    {
+                        additionalClass = "desktop-hidden--homePage";
+                    }
+                    else if (index > 4)
+                    {
+                        additionalClass = " hidden-sm hidden-xs";
+                    }
+                    else if (index > 3)
+                    {
+                        additionalClass = " hidden-xs";
+                    }
+                    else if (index > 2)
+                    {
+                        additionalClass = "hidden-xs";
+                    }
+                    <div class="@additionalClass" style="position:relative">
+                        @Html.Partial("_InzeratThumbnail", inzerat)
+                        <div class="product-shadow-homePage"></div>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class=" product-list-wrapper recently-viewed-slider swiper-container desktop-hidden--homePage">
+            <div class="swiper-wrapper">
+                @{
+                    index = 0;
+                }
+                @while (index < Model.MostViewedInzerats.Count)
+                {
+                    <div class="swiper-slide">
+                        @Html.Partial("_InzeratThumbnail", Model.MostViewedInzerats[index++])
+                        <div class="product-shadow-homePage"></div>
+                    </div>
+
+                }
+            </div>
+        </div>
+    </section>
+
+
+    @if (Model.TopInzerats.Count > 0)
+    {
+        <div class="products-group">
+            <div class="flex products-header">
+
+                <a class="products-group-header top-products-group-header" href="/inzeraty">Top produkty</a>
+                <a href="/inzeraty" class="products-group-header-showMore ">
+                    Ukázať viac
+                    <img src="~/Content/img/arrow-showMore.png" class="products-group-header-showMore-img" />
+                </a>
+            </div>
+            <div class="mobile-hidden--homePage">
+                <div class="flex homePage-products-top flex-grow">
+                    @{ index = 0; }
+                    @foreach (var inzerat in Model.TopInzerats)
+                    {
+                        index++;
+                        var additionalClass = "";
+                        if (index > 4)
+                        {
+                            additionalClass = "desktop-hidden--homePage";
+                        }
+                        else if (index > 3)
+                        {
+                            additionalClass = "  hidden-xs";
+                        }
+                        else if (index > 2)
+                        {
+                            additionalClass = "hidden-xs";
+                        }
+                        <div class="@additionalClass" style="position:relative">
+                            @Html.Partial("_InzeratThumbnail", inzerat)
+                            <div class="top-product-shadow-homePage"></div>
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="swiper-container topProduct-list-wrapper desktop-hidden--homePage">
+                <div class="swiper-wrapper">
+                    @{
+                        index = 0;
+                    }
+                    @while (index < Model.TopInzerats.Count)
+                    {
+                        <div class="swiper-slide">
+                            @Html.Partial("_InzeratThumbnail", Model.TopInzerats[index++])
+                            <div class="top-product-shadow-homePage"></div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<section class=" top-sellers">
+    <h2 class="top-sellers-title">Overení predajcovia</h2>
+    <div class="seller-row mobile-hidden--homePage">
+        <div class="recommended-sellers-wrapper">
+            @foreach (var seller in Model.RecommendedSellers)
+            {
+                var url = seller.ProfileImageUrl;
+                if (string.IsNullOrWhiteSpace(url))
+                {
+                    url = "https://res.cloudinary.com/gonimagecloud/image/upload/v1567958217/Group_2426_2x.png";
+                }
+                <a class="box visible recommended-sellers-item" href="@Url.Action("Index", "Inzerent", new { id = seller.Id })">
+                    <img src="@url" alt="@seller.UserName Profile Picture" />
+                    <div class="seller-data">
+                        <div class="seller-data-userName">
+                            @seller.UserName
+                        </div>
+
+                        @if (seller.IsVerified)
+                        {
+                            <img src="~/Content/img/verified.png" />
+                        }
+                    </div>
+                </a>
+            }
+        </div>
+    </div>
+
+    <div class="swiper-container recommended-sellers-slider desktop-hidden--homePage">
+        <div class="swiper-wrapper">
+
+            @foreach (var seller in Model.RecommendedSellers)
+            {
+                var url = seller.ProfileImageUrl;
+                if (string.IsNullOrWhiteSpace(url))
+                {
+                    url = "https://res.cloudinary.com/gonimagecloud/image/upload/v1567958217/Group_2426_2x.png";
+                }
+                <div class="swiper-slide">
+                    <a class="box visible recommended-sellers-item" href="@Url.Action("Index", "Inzerent", new { id = seller.Id })">
+                        <img src="@url" alt="@seller.UserName Profile Picture" />
+                        <div class="seller-data">
+                            <div class="seller-data-userName">
+                                @seller.UserName
+                            </div>
+                            @if (seller.IsVerified)
+                            {
+                                <img src="~/Content/img/verified.png" />
+                            }
+                        </div>
+                    </a>
+                </div>
+            }
+
+        </div>
+    </div>
+</section>
+
+<div class="homePage-wrapper">
+
+    <div class="products-group">
+        <div class="flex products-header">
+            @*<a class="products-group-header" href="/inzeraty">Od ľudí, ktorých sleduješ</a>*@
+            <a class="products-group-header" href="/inzeraty">Predajcovia, ktorých sleduješ</a>
+            <a href="/inzeraty" class=" products-group-header-showMore">
+                Ukázať viac
+                <img src="~/Content/img/arrow-showMore.png" class="products-group-header-showMore-img" />
+            </a>
+        </div>
+        <div class="mobile-hidden--homePage">
+            <div class="flex homePage-products-yourSellers flex-grow">
+                @{ index = 0; }
+                @foreach (var inzerat in Model.MostViewedInzerats.OrderByDescending(x => x.ViewCount))
+                {
+                    inzerat.IsMostViewed = true;
+                    index++;
+                    var additionalClass = "";
+                    if (index > 5)
+                    {
+                        additionalClass = "desktop-hidden--homePage";
+                    }
+                    else if (index > 4)
+                    {
+                        additionalClass = " hidden-sm hidden-xs";
+                    }
+                    else if (index > 3)
+                    {
+                        additionalClass = " hidden-xs";
+                    }
+                    else if (index > 2)
+                    {
+                        additionalClass = "hidden-xs";
+                    }
+                    <div class=" @additionalClass" style="position:relative">
+                        @Html.Partial("_InzeratThumbnail", inzerat)
+                        <div class="product-shadow-homePage"></div>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="swiper-container yourSellersSection desktop-hidden--homePage product-list-wrapper">
+            <div class="swiper-wrapper">
+                @{
+                    index = 0;
+                }
+                @while (index < Model.MostViewedInzerats.Count)
+                {
+                    <div class="swiper-slide">
+                        @Html.Partial("_InzeratThumbnail", Model.MostViewedInzerats[index++])
+                        <div class="product-shadow-homePage"></div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="visit-store-wrapper flex">
+        <div class="visit-store-left-block">
+            <img src="" />
+            <a class="visit-store-button visit-store-button--left">
+                Navštív shop
+
+            </a>
+            <div class="visit-store_box-shadow visit-store_box-shadow--left"></div>
+            <div class="visit-store-logo"><img src="~/Content/img/logofin.png" /></div>
+        </div>
+
+        <div class="visit-store-right-block">
+            <img />
+            <a class="visit-store-button visit-store-button--right">Navštív shop</a>
+            <div class="visit-store_box-shadow visit-store_box-shadow--right"></div>
+            <div class="visit-store-logo"><img src="~/Content/img/logofin.png" /></div>
+        </div>
+    </div>
+
+
+    <div class="products-group">
+        <div class="flex products-header">
+            <a class="products-group-header" href="/inzeraty">Najnovšie</a>
+        </div>
+        <div class="mobile-hidden--homePage">
+            <div class="flex homePage-products-newest flex-grow">
+                @{ index = 0; }
+                @foreach (var inzerat in Model.NewInzerats.OrderByDescending(x => x.DatePostedUtc))
+                {
+                    index++;
+                    var additionalClass = "";
+                    if (index > 5)
+                    {
+                        additionalClass = "homePage-newestProduct-withot-marginBottom homePage-newestProduct-item";
+                    }
+                    else
+                    {
+                        additionalClass = "homePage-newestProduct-with-marginBottom homePage-newestProduct-item";
+                    }
+                    <div class="@additionalClass" style="position:relative">
+                        @Html.Partial("_InzeratThumbnail", inzerat)
+                        <div class="product-shadow-homePage"></div>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="flex-grow desktop-hidden--homePage new-products-wrapper flex">
+            @{
+                index = 0;
+            }
+            @while (index < Model.NewInzerats.Count)
+            {
+                <div class="new-product-item">
+                    @Html.Partial("_InzeratThumbnail", Model.NewInzerats[index++])
+                    <div class="product-shadow-homePage"></div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="homePage-showMore-button-wrapper">
+    <button type="submit" class="homePage-showMore-button">Ukázať viac</button>
+</div>
+
+
+@if (!Model.IsUserSubscribedToNewsletter)
+{
+    <section class="newsletter-section">
+        <div class="newsletter-partial">
+            <h2>Prihláste sa k odberu nášho newsletteru</h2>
+            <p>Chcete byť informovaný o novinkách pridaných na našich e-shopoch?<br /> Budte stále prvý kto si ich uchmatne s najväčšími zľavami!</p>
+
+            <div id="UserNewsletterSubscriptionForm">
+                <div class="newsletter-email-disclaimer flex flex-vertical">
+                    <label>Vaša e-mailová adresa:</label>
+                    <input type="email" id="newsletterUserEmail" placeholder="&#64;" />
+
+                    <div class="disclaimer">
+                        Odber e-mailu môžete zrušiť kedykoľvek <span>!</span>
+                    </div>
+                </div>
+
+
+                <button class="rounded-corners" onclick="userSubscribeNewsletter()">
+                    <span>ODOBERAŤ</span>
+                    <img src="~/Content/img/news-letter-send.png" class="rounded-arrow" />
+                </button>
+            </div>
+        </div>
+    </section>
+}
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.9"></script>
+    <script type="text/javascript" src="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    <script>
+
+        var stopBanners = false;
+
+        function userSubscribeNewsletter() {
+            let email = $('#newsletterUserEmail').val();
+
+            $.post("/api/newsletter/subscribe?&email=" + email, {}, () => {
+                $('.newsletter-section').slideToggle();
+            }).fail();
+        }
+
+        $('.gallery-dots.header-dots .dot').click(function () {
+            stopBanners = true;
+
+            var matchingBanner = $('.image-background[data-id="' + $(this).data('id') + '"]');
+
+            $('.image-background').each(function () {
+                if ($(this) != matchingBanner) {
+
+                    //$(this).removeClass('shown');
+                    $(this).addClass('closing');
+
+
+                    setTimeout(function () {
+                        $(this).removeClass('shown');
+                        $(this).removeClass('closing');
+                    }, 1000);
+                }
+            })
+            matchingBanner.addClass('shown');
+            matchingBanner.removeClass('closing')
+
+            $('.gallery-dots.header-dots .dot').removeClass('selected');
+            $(this).addClass('selected')
+        })
+
+        $(document).ready(function () {
+            moveSlide();
+
+            resize();
+
+            animate();
+
+            const swiper = new Swiper('.by-styled-wrapper-slider', {
+                slidesPerView: 2.2,
+                touchRatio: 1,
+                touchAngle: 25,
+                freeMode: true,
+                breakpoints: {
+                    320: {
+                        slidesPerView: 1.85,
+                    },
+                    370: {
+                        slidesPerView: 2.1,
+                        slidesOffsetAfter: -32,
+                    },
+                    400: {
+                        slidesPerView: 2.2,
+                        slidesOffsetAfter: -72,
+                    },
+                    765: {
+                        slidesPerView: 4,
+                        allowTouchMove: false,
+                    },
+                }
+
+            });
+
+
+            const recentlySwiper = new Swiper('.recently-viewed-slider', {
+                slidesPerView: 2.28,
+                touchRatio: 0.8,
+                touchAngle: 25,
+                speed: 800,
+                freeMode: true,
+                freeModeMomentumVelocityRatio: 0.8,
+                breakpoints: {
+                    320: {
+                        slidesPerView: 1.74,
+                    },
+                    370: {
+                        slidesPerView: 2.07,
+                    },
+                    400: {
+                        slidesPerView: 2.28,
+                    },
+                    765: {
+                        slidesPerView: 4.37,
+                    },
+                }
+            });
+            const topSwiper = new Swiper('.topProduct-list-wrapper', {
+                slidesPerView: 1.61,
+                simulateTouch: true,
+                touchRatio: 0.8,
+                touchAngle: 25,
+                speed: 800,
+                freeMode: true,
+                freeModeMomentumVelocityRatio: 0.8,
+                breakpoints: {
+                    320: {
+                        slidesPerView: 1.23,
+                    },
+                    370: {
+                        slidesPerView: 1.45,
+                    },
+                    400: {
+                        slidesPerView: 1.61,
+                    },
+                    765: {
+                        slidesPerView: 3.08,
+                    },
+                }
+            });
+
+            const yourSellersSwiper = new Swiper('.yourSellersSection', {
+                slidesPerView: 2.3,
+                touchRatio: 0.8,
+                touchAngle: 25,
+                speed: 800,
+                freeMode: true,
+                freeModeMomentumVelocityRatio: 0.8,
+                breakpoints: {
+                    320: {
+                        slidesPerView: 1.74,
+                    },
+                    370: {
+                        slidesPerView: 2.07,
+                    },
+                    400: {
+                        slidesPerView: 2.28,
+                    },
+                    765: {
+                        slidesPerView: 4.37,
+                    },
+                }
+            });
+
+            const recommendedSellersSwiper = new Swiper('.recommended-sellers-slider', {
+                slidesPerView: 3.5,
+                touchRatio: 1.2,
+                touchAngle: 25,
+                speed: 1000,
+                loop: true,
+                freeMode: true,
+                freeModeMomentumVelocityRatio: 0.4,
+                breakpoints: {
+                    450: {
+                        slidesPerView: 4.3,
+                    },
+                    550: {
+                        slidesPerView: 5,
+                    },
+                }
+            });
+
+
+            $('.recommended-sellers-wrapper').slick({
+                infinite: true,
+                slidesToShow: 5,
+                slidesToScroll: 1,
+                cssEase: 'ease-out',
+                autoplay: true,
+                cssEase: 'ease-out',
+                swipeToSlide: true,
+                autoplaySpeed: 2000,
+                prevArrow: '<button type="button" class="slick-prev arrow left-arrow"><img src="/Content/img/arrow-left-black.png" alt="Left Arrow" /></button>',
+                nextArrow: '<button type="button" class="slick-prev arrow right-arrow"><img src="/Content/img/arrow-right-black.png" alt="Right Arrow" /></button>',
+                responsive: [
+                    {
+                        breakpoint: 650,
+                        settings: {
+                            slidesToShow: 3,
+                        },
+                    }
+                ]
+            });
+            $('.recommended-sellers-wrapper').css('opacity', '1');
+        })
+
+        function animate() {
+            $('.rolling-wrapper').animate({
+                'margin-left': -width
+            }, 25000, 'linear', function () {
+                $('.rolling-wrapper').css('margin-left', 0);
+                animate();
+            });
+        }
+
+        $(window).resize(function () {
+            resize();
+        })
+
+        var currentIndex = 0;
+        function resize() {
+            width = $('.rolling-wrapper').width();
+
+            $('.rolling-wrapper.anchor-right').css('left', width + 'px');
+
+            resizeSellerImages();
+        }
+
+        $('.seller-row .right-arrow').click(function () {
+            if (!$('.resize-wrapper .box:last').hasClass('visible')) {
+                currentIndex++;
+            }
+            resizeSellerImages();
+        })
+        $('.seller-row .left-arrow').click(function () {
+            if (currentIndex > 0) {
+                currentIndex--;
+            }
+            resizeSellerImages();
+        })
+        function resizeSellerImages() {
+            //var wrapperWidth = $('.resize-wrapper').width();
+            //var fitted = wrapperWidth / 80;
+
+            //$('.resize-wrapper .box').removeClass('visible');
+
+            //$('.resize-wrapper .box').slice(currentIndex, currentIndex + fitted).each(function () {
+            //    $(this).addClass('visible');
+            //})
+        }
+        function moveSlide() {
+            setTimeout(function () {
+                if (stopBanners) {
+                    return false;
+                }
+                if ($('.image-background').length == 1) {
+                    return false;
+                }
+
+                var currentSlide = $('.image-background.shown');
+
+
+                currentSlide.addClass('closing');
+
+
+                setTimeout(function () {
+                    currentSlide.removeClass('shown');
+                    currentSlide.removeClass('closing');
+                }, 1000);
+
+                let nextSlide;
+                if (currentSlide.next('.image-background').length > 0) {
+                    nextSlide = currentSlide.next()
+                }
+                else {
+                    nextSlide = $('.home-header-background').children().first();
+                }
+                nextSlide.addClass('shown');
+
+                $('.gallery-dots.header-dots .dot').removeClass('selected');
+                $('.gallery-dots.header-dots .dot[data-id="' + nextSlide.data('id') + '"]').addClass('selected');
+
+                $('.header-typer span').animate({ opacity: 0 }, 250);
+                moveSlide();
+
+            }, 5000);
+        }
+    </script>
+
+}
